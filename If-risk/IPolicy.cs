@@ -18,7 +18,8 @@ public interface IPolicy
     /// Total price of the policy. Calculate by summing up all insured risks.
     /// Take into account that risk price is given for 1 full year. Policy/risk period can be shorter.
     /// </summary>
-    decimal Premium { get; }
+    decimal Premium { get; set; }
+
     /// <summary>
     /// Initially included risks or risks at specific moment of time.
     /// </summary>

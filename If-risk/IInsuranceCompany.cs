@@ -33,4 +33,4 @@ public interface IInsuranceCompany
     /// <param name="effectiveDate">Point of date and time, when the policy effective</param>
     /// <returns></returns>
     IPolicy GetPolicy(string nameOfInsuredObject, DateTime effectiveDate);
-}
+} 
