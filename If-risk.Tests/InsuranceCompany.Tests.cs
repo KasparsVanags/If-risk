@@ -107,6 +107,20 @@ public class InsuranceCompanyTests
     };
 
     [Test]
+    public void Cant_Calculate_Premium_When_Both_Dates_Are_The_Same()
+    {
+        Assert.Throws<ArgumentException>(() => 
+            InsuranceCompany.CalculatePremium(1000, _testDate1, _testDate1));
+    }
+    
+    [Test]
+    public void Cant_Calculate_Premium_When_End_Date_Is_Before_Start_Date()
+    {
+        Assert.Throws<ArgumentException>(() => 
+            InsuranceCompany.CalculatePremium(1000, _testDate2, _testDate1));
+    }
+    
+    [Test]
     public void Can_Update_Available_Risks()
     {
         var newRisk = new Risk("fire", 1500);
@@ -146,6 +160,13 @@ public class InsuranceCompanyTests
         Assert.Throws<PolicyAlreadyExistsException>(() => _company.SellPolicy("Ferrari",
             new DateTime(2022,12,31), 12, new List<Risk> { new("theft", 1000) }));
     }
+    
+    [Test]
+    public void Cant_Sell_Policy_If_Company_Doesnt_Insure_Risk()
+    {
+        Assert.Throws<CompanyDoesntInsureRiskException>(() => _company.SellPolicy("House", _testDate1, 12,
+            new List<Risk> { new("zombie attack", 1000) }));
+    }
 
     [Test]
     public void Can_Get_Policy_Info()
@@ -166,6 +187,13 @@ public class InsuranceCompanyTests
     {
         Assert.Throws<PolicyNotFoundException>(() => _company.AddRisk("Ghost",
             new Risk("crash", 1000), _testDate1 + TimeSpan.FromDays(31)));
+    }
+    
+    [Test]
+    public void Cant_Add_Risk_If_Company_Doesnt_Insure_That_Risk()
+    {
+        Assert.Throws<CompanyDoesntInsureRiskException>(() => _company.AddRisk("Ferrari",
+            new Risk("alien attack", 1000), _testDate1 + TimeSpan.FromDays(31)));
     }
 
     [TestCaseSource(nameof(_invalidDates))]

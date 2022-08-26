@@ -43,7 +43,7 @@ public class PolicyTests
     }
     
     [TestCaseSource(nameof(_invalidPolicyTestCases))]
-    public void InvalidPoliciesCantBeCreated(string nameOfInsuredObject, DateTime validFrom, DateTime validTill,
+    public void Invalid_Policies_Cant_Be_Created(string nameOfInsuredObject, DateTime validFrom, DateTime validTill,
         IList<Risk> insuredRisks)
     {
         
