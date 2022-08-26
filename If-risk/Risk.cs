@@ -1,3 +1,5 @@
+using If_risk.Exceptions;
+
 namespace If_risk;
 
 public struct Risk 
@@ -15,12 +17,12 @@ public struct Risk
     {
         if (name.Where(char.IsLetter).Count() < 3)
         {
-            throw new FormatException("Invalid name");
+            throw new InvalidRiskException("Invalid name");
         }
 
         if (yearlyPrice <= 0)
         {
-            throw new ArgumentException("Invalid price");
+            throw new InvalidRiskException("Invalid price");
         }
         
         Name = name.ToLower();

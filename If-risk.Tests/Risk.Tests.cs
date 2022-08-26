@@ -1,3 +1,5 @@
+using If_risk.Exceptions;
+
 namespace Tests;
 
 [TestFixture]
@@ -22,6 +24,6 @@ public class RiskTests
     public void Invalid_Risks_Cant_Be_Created(string name, decimal yearlyPrice)
     {
         Action a = () => new Risk(name, yearlyPrice);
-        a.Should().Throw<Exception>();
+        a.Should().Throw<InvalidRiskException>();
     }
 }

@@ -1,3 +1,5 @@
+using If_risk.Exceptions;
+
 namespace Tests;
 
 [TestFixture]
@@ -46,7 +48,7 @@ public class PolicyTests
     {
         
         Action a = () => new Policy(nameOfInsuredObject, validFrom, validTill, insuredRisks);
-        a.Should().Throw<Exception>();
+        a.Should().Throw<InvalidPolicyException>();
     }
 
     private static object[] _invalidPolicyTestCases =

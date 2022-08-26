@@ -1,3 +1,5 @@
+using If_risk.Exceptions;
+
 namespace Tests;
 
 [TestFixture]
@@ -141,7 +143,7 @@ public class InsuranceCompanyTests
     [Test]
     public void Cant_Sell_Policy_When_A_Policy_Within_The_Same_Time_Period_Already_Exists()
     {
-        Assert.Throws<ArgumentException>(() => _company.SellPolicy("Ferrari",
+        Assert.Throws<PolicyAlreadyExistsException>(() => _company.SellPolicy("Ferrari",
             new DateTime(2022,12,31), 12, new List<Risk> { new("theft", 1000) }));
     }
 
@@ -162,14 +164,14 @@ public class InsuranceCompanyTests
     [Test]
     public void Cant_Add_Risk_If_A_Policy_Doesnt_Exist()
     {
-        Assert.Throws<ArgumentException>(() => _company.AddRisk("Ghost",
+        Assert.Throws<PolicyNotFoundException>(() => _company.AddRisk("Ghost",
             new Risk("crash", 1000), _testDate1 + TimeSpan.FromDays(31)));
     }
 
     [TestCaseSource(nameof(_invalidDates))]
     public void Cant_Add_Risk_If_Date_Is_Incorrect(DateTime date)
     {
-        Assert.Throws<ArgumentException>(() => _company.AddRisk("Ferrari",
+        Assert.Throws<PolicyNotFoundException>(() => _company.AddRisk("Ferrari",
             new Risk("crash", 1000), new DateTime(2090,1,1)));
     }
 

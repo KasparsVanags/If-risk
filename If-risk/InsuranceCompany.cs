@@ -1,3 +1,5 @@
+using If_risk.Exceptions;
+
 namespace If_risk;
 
 public class InsuranceCompany:IInsuranceCompany
@@ -22,34 +24,30 @@ public class InsuranceCompany:IInsuranceCompany
 
     public IPolicy SellPolicy(string nameOfInsuredObject, DateTime validFrom, short validMonths, IList<Risk> selectedRisks)
     {
-        var invalidRisks = selectedRisks.Select(x => x.Name)
-            .Except(AvailableRisks.Select(x => x.Name)).ToList();
-        var alreadyExistingPolicy = _policies.Where(x => x.NameOfInsuredObject == nameOfInsuredObject)
-            .Where(x => x.ValidTill >= validFrom).ToList();
+        var validRiskNames = AvailableRisks.Select(x => x.Name).ToList();
+        var invalidRisks = selectedRisks.Where(x => !validRiskNames.Contains(x.Name)).ToList();
         if (invalidRisks.Any())
         {
-            throw new ArgumentException($"{string.Join(", ", invalidRisks)} not available");
+            throw new CompanyDoesntInsureRiskException(invalidRisks);
         }
 
-        if (alreadyExistingPolicy.Any())
+        try
         {
-            throw new ArgumentException($"A policy already exists {alreadyExistingPolicy[0].ValidFrom} - " +
-                                        $"{alreadyExistingPolicy[0].ValidTill}");
+            GetPolicy(nameOfInsuredObject, validFrom);
+            throw new PolicyAlreadyExistsException(nameOfInsuredObject, validFrom);
+        }
+        catch (PolicyNotFoundException)
+        {
+
+            _policies.Add(new Policy(nameOfInsuredObject, validFrom,
+                validFrom.AddMonths(validMonths) - TimeSpan.FromDays(1), selectedRisks));
         }
         
-        _policies.Add(new Policy(nameOfInsuredObject, validFrom,
-            validFrom.AddMonths(validMonths) - TimeSpan.FromDays(1), selectedRisks));
         return _policies.Last();
     }
 
     public void AddRisk(string nameOfInsuredObject, Risk risk, DateTime validFrom)
     {
-        if (!_policies.Any(x => x.NameOfInsuredObject == nameOfInsuredObject &&
-                               x.ValidFrom <= validFrom && validFrom < x.ValidTill))
-        {
-            throw new ArgumentException($"{nameOfInsuredObject} doesnt have a policy in {validFrom}");
-        }
-        
         if (AvailableRisks.Any(x => x.Name == risk.Name.ToLower()))
         {
             var policyToEdit = GetPolicy(nameOfInsuredObject, validFrom);
@@ -59,14 +57,20 @@ public class InsuranceCompany:IInsuranceCompany
         }
         else
         {
-            throw new ArgumentException($"{risk} is not available");
+            throw new CompanyDoesntInsureRiskException(risk);
         }
     }
 
     public IPolicy GetPolicy(string nameOfInsuredObject, DateTime effectiveDate)
     {
-        return _policies.First(policy =>
-            policy.NameOfInsuredObject == nameOfInsuredObject && policy.ValidTill > effectiveDate);
+        var policy = _policies.FirstOrDefault(x => x.NameOfInsuredObject == nameOfInsuredObject && x.ValidFrom <= effectiveDate &&
+                                                   effectiveDate < x.ValidTill, null);
+        if(policy == null)
+        {
+            throw new PolicyNotFoundException(nameOfInsuredObject, effectiveDate);
+        }
+        
+        return policy;
     }
 
     public static decimal CalculatePremium(decimal yearlyPremium, DateTime startDate, DateTime endDate)
