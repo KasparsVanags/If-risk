@@ -87,8 +87,10 @@ public class InsuranceCompanyTests
     public void AddRisk_RiskInsuredByCompany_AddsARiskToPolicy()
     {
         var newRisk = new Risk("crash", 1000);
-        _company.AddRisk("Ferrari", newRisk, _testDate1 + TimeSpan.FromDays(31));
-        _company.GetPolicy("Ferrari", _testDate1).InsuredRisks.Should().Contain(newRisk);
+        var date = _testDate1 + TimeSpan.FromDays(31);
+        _company.AddRisk("Ferrari", newRisk, date);
+        _company.GetPolicy("Ferrari", _testDate1).InsuredRisks.Should().Contain
+            (new Risk(newRisk.Name, newRisk.YearlyPrice, date));
     }
 
     [Test]

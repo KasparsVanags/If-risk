@@ -51,9 +51,7 @@ public class InsuranceCompany:IInsuranceCompany
         if (AvailableRisks.Any(x => x.Name == risk.Name.ToLower()))
         {
             var policyToEdit = GetPolicy(nameOfInsuredObject, validFrom);
-            policyToEdit.InsuredRisks.Add(risk);
-            policyToEdit.Premium += PremiumCalculator.CalculatePremium(risk.YearlyPrice, validFrom, policyToEdit.ValidTill);
-
+            policyToEdit.InsuredRisks.Add(new Risk(risk.Name, risk.YearlyPrice, validFrom));
         }
         else
         {
@@ -63,7 +61,7 @@ public class InsuranceCompany:IInsuranceCompany
 
     public IPolicy GetPolicy(string nameOfInsuredObject, DateTime effectiveDate)
     {
-        var policy = _policies.FirstOrDefault(x => x.NameOfInsuredObject == nameOfInsuredObject && x.ValidFrom <= effectiveDate &&
+        var policy = _policies.FirstOrDefault(x => x!.NameOfInsuredObject == nameOfInsuredObject && x.ValidFrom <= effectiveDate &&
                                                    effectiveDate < x.ValidTill, null);
         if(policy == null)
         {

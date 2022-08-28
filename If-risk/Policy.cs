@@ -8,7 +8,15 @@ public class Policy:IPolicy
     public string NameOfInsuredObject { get; }
     public DateTime ValidFrom { get; }
     public DateTime ValidTill { get; }
-    public decimal Premium { get; set; }
+    public decimal Premium
+    {
+        get
+        {
+            return InsuredRisks.Select(x => PremiumCalculator.CalculatePremium
+                (x.YearlyPrice, x.CreationDate == default ? ValidFrom : x.CreationDate, ValidTill)).Sum();
+        }
+    }
+
     public IList<Risk> InsuredRisks { get; }
     
     public Policy(string nameOfInsuredObject, DateTime validFrom, DateTime validTill, 
@@ -19,8 +27,6 @@ public class Policy:IPolicy
             NameOfInsuredObject = nameOfInsuredObject;
             ValidFrom = validFrom;
             ValidTill = validTill;
-            Premium = insuredRisks.Select(risk =>
-                PremiumCalculator.CalculatePremium(risk.YearlyPrice, validFrom, validTill)).Sum();
             InsuredRisks = insuredRisks;
         }
         else
@@ -29,11 +35,6 @@ public class Policy:IPolicy
         }
     }
 
-    public void UpdatePremium()
-    {
-        
-    }
-    
     private bool IsValid(string nameOfInsuredObject, DateTime validFrom, DateTime validTill, 
         IList<Risk> insuredRisks)
     {
