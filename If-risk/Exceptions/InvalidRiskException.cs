@@ -1,6 +1,5 @@
 namespace If_risk.Exceptions;
 
-[Serializable]
 public class InvalidRiskException : Exception
 {
     public InvalidRiskException()

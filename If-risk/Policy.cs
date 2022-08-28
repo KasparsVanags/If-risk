@@ -14,32 +14,33 @@ public class Policy:IPolicy
     public Policy(string nameOfInsuredObject, DateTime validFrom, DateTime validTill, 
         IList<Risk> insuredRisks)
     {
-        if (!Regex.IsMatch(nameOfInsuredObject, @"^[a-zA-Z0-9]|\s+$") ||
-            nameOfInsuredObject.Where(char.IsLetter).Count() < 3)
+        if (IsValid(nameOfInsuredObject, validFrom, validTill, insuredRisks))
         {
-            throw new InvalidPolicyException("Invalid name");
+            NameOfInsuredObject = nameOfInsuredObject;
+            ValidFrom = validFrom;
+            ValidTill = validTill;
+            Premium = insuredRisks.Select(risk =>
+                PremiumCalculator.CalculatePremium(risk.YearlyPrice, validFrom, validTill)).Sum();
+            InsuredRisks = insuredRisks;
         }
+        else
+        {
+            throw new InvalidPolicyException();
+        }
+    }
 
-        if (validFrom >= validTill)
-        {
-            throw new InvalidPolicyException("Start date can't be before or same as end date");
-        }
-
-        if (insuredRisks.Count < 1)
-        {
-            throw new InvalidPolicyException("No risks selected");
-        }
-
-        if (validFrom < SystemTime.Now())
-        {
-            throw new InvalidPolicyException("Date can't be in past");
-        }
+    public void UpdatePremium()
+    {
         
-        NameOfInsuredObject = nameOfInsuredObject;
-        ValidFrom = validFrom;
-        ValidTill = validTill;
-        Premium = insuredRisks.Select(risk => 
-            InsuranceCompany.CalculatePremium(risk.YearlyPrice, validFrom, validTill)).Sum();
-        InsuredRisks = insuredRisks;
+    }
+    
+    private bool IsValid(string nameOfInsuredObject, DateTime validFrom, DateTime validTill, 
+        IList<Risk> insuredRisks)
+    {
+        return Regex.IsMatch(nameOfInsuredObject, @"^[a-zA-Z0-9]|\s+$") &&
+               nameOfInsuredObject.Where(char.IsLetter).Count() >= 3 &&
+               validFrom < validTill &&
+               insuredRisks.Count >= 1 &&
+               validFrom >= SystemTime.Now();
     }
 }
