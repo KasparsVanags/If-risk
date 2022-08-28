@@ -23,7 +23,7 @@ public class PolicyTests
     }
 
     [Test]
-    public void Valid_Policy_Can_Be_Created()
+    public void Policy_ValidData_ReturnsANewPolicy()
     {
         var testRisk = new Risk("Fire", 1000);
         var policy = new Policy("Johns car", _testDate1, _testDate2,
@@ -35,7 +35,7 @@ public class PolicyTests
     }
     
     [Test]
-    public void Premium_Is_Calculated_Correctly_When_A_Policy_Is_Created()
+    public void Policy_AfterCreation_HasCorrectPremium()
     {
         var policy = new Policy("house", new DateTime(2022, 1, 1),
             new DateTime(2022, 12, 31), new List<Risk>{new("fire", 1000)});
@@ -43,7 +43,7 @@ public class PolicyTests
     }
     
     [TestCaseSource(nameof(_invalidPolicyTestCases))]
-    public void Invalid_Policies_Cant_Be_Created(string nameOfInsuredObject, DateTime validFrom, DateTime validTill,
+    public void Policy_InvalidData_ThrowsInvalidPolicyException(string nameOfInsuredObject, DateTime validFrom, DateTime validTill,
         IList<Risk> insuredRisks)
     {
         

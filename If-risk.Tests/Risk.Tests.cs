@@ -21,7 +21,7 @@ public class RiskTests
     [TestCase("fire", 0)]
     [TestCase("crash", -10)]
     [TestCase("a", -100)]
-    public void Invalid_Risks_Cant_Be_Created(string name, decimal yearlyPrice)
+    public void Risk_InvalidRisk_ThrowsInvalidRiskException(string name, decimal yearlyPrice)
     {
         Action a = () => new Risk(name, yearlyPrice);
         a.Should().Throw<InvalidRiskException>();

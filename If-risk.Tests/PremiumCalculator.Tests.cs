@@ -6,7 +6,7 @@ namespace Tests;
 public class PremiumCalculator_Tests
 {
     [TestCaseSource(nameof(_premiumCalculationTestCases))]
-    public void Premium_Calculation_Is_Correct(decimal yearlyPremium, DateTime startDate, DateTime endDate, decimal result)
+    public void PremiumCalculator_ValidData_ReturnsPremium(decimal yearlyPremium, DateTime startDate, DateTime endDate, decimal result)
     {
         PremiumCalculator.CalculatePremium(yearlyPremium, startDate, endDate).Should().Be(result);
     }
@@ -83,7 +83,7 @@ public class PremiumCalculator_Tests
     };
 
     [Test]
-    public void Cant_Calculate_Premium_When_Both_Dates_Are_The_Same()
+    public void PremiumCalculator_DatesOverlap_ThrowsArgumentException()
     {
         var date = new DateTime(2022, 1, 24);
         Assert.Throws<ArgumentException>(() => 
@@ -91,7 +91,7 @@ public class PremiumCalculator_Tests
     }
     
     [Test]
-    public void Cant_Calculate_Premium_When_End_Date_Is_Before_Start_Date()
+    public void PremiumCalculator_DatesInWrongOrder_ThrowsArgumentException()
     {
         Assert.Throws<ArgumentException>(() => 
             PremiumCalculator.CalculatePremium(1000, new DateTime(2023, 1, 23),
