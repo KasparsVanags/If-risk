@@ -6,7 +6,7 @@ namespace Tests;
 public class RiskTests
 {
     [Test]
-    public void ValidRiskCanBeCreated()
+    public void Risk_ValidData_CreatesANewRisk()
     {
         var risk = new Risk("Fire", 1000);
         risk.Name.Should().Be("fire");
